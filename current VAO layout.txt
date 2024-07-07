@@ -1,0 +1,33 @@
+current VAO layout
+==========================
+0 - Vertices VBO
+1 - Indices EBO
+2 - Instance positions VBO
+3 - Instance rotations VBO
+view matrix, projection matrix and offset are uniforms
+
+new VAO layout for body parts
+======================
+0 - Cube vertex data (single cuboid)
+1 - Indices EBO
+2 - Instance transform VBO
+view matrix, projection matrix are uniforms
+the idea is to get all the cuboids for the body parts, and instance a single cube. so for a pig there will be
+5 instances, one for each cuboid.
+
+
+===== old =====
+24 floats vertex data
+24 ints indices
+300 floats instance positions
+200 floats instance rotations
+initial: (24 * 4) + (24 * 4) + (3 * 4) = 204 bytes
+total per frame: (300 * 4) + (200 * 4) = 2000 bytes
+
+===== new =====
+24 floats vertex data
+24 ints index data
+1500 floats cube dimensions
+400 floats instance transforms
+initial: (120 * 4) + (120 * 4) = 192 bytes
+per frame: (1500 * 4) + (1500 * 4) + (400 * 4) = 13600 bytes

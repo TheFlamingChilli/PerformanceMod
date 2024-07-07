@@ -1,0 +1,100 @@
+<mxfile host="app.diagrams.net" modified="2024-06-25T10:18:32.884Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36" etag="wOG-mY7Whp4FtthtntC3" version="23.0.2" type="device">
+  <diagram name="Page-1" id="cuG_-icz1KyXiYvgiyNX">
+    <mxGraphModel dx="1194" dy="716" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="-gMOZmjQeYBe39kgHxyp-3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="-gMOZmjQeYBe39kgHxyp-1" target="-gMOZmjQeYBe39kgHxyp-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="-gMOZmjQeYBe39kgHxyp-1" value="game calls WorldRenderer::render" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="170" y="120" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="-gMOZmjQeYBe39kgHxyp-5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="-gMOZmjQeYBe39kgHxyp-2" target="-gMOZmjQeYBe39kgHxyp-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="-gMOZmjQeYBe39kgHxyp-2" value="in WorldRenderer::render, there is a for loop that loops over every entity and calls WorldRenderer::renderEntity, passing the entity and the VertexConsumerProvider instance" style="whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="95" y="220" width="290" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="-gMOZmjQeYBe39kgHxyp-7" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="-gMOZmjQeYBe39kgHxyp-4" target="-gMOZmjQeYBe39kgHxyp-6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="-gMOZmjQeYBe39kgHxyp-4" value="WorldRenderer::renderEntity calls EntityRenderDispatcher::render on the entityRenderDispatcher instance, passing the entity and VertexConsumerProvider instance" style="whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="115" y="320" width="250" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="-gMOZmjQeYBe39kgHxyp-10" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="-gMOZmjQeYBe39kgHxyp-6" target="-gMOZmjQeYBe39kgHxyp-9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="-gMOZmjQeYBe39kgHxyp-6" value="EntityRenderDispatcher::render gets the entity renderer for the provided entity and calls EntityRenderer::render on the renderer, passing the entity and the VertexConsumerProvider instance. Since there are multiple types of entities in Minecraft, each needs their own way of rendering, so each type gets its own EntityRenderer" style="whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="80" y="420" width="320" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="-gMOZmjQeYBe39kgHxyp-12" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="-gMOZmjQeYBe39kgHxyp-9" target="-gMOZmjQeYBe39kgHxyp-11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="-gMOZmjQeYBe39kgHxyp-9" value="Animals use LivingEntityRenderer which inherits EntityRenderer. LivingEntityRenderer::render does a bunch of checks, then eventually call Model::render on the entity renderer&#39;s model instance, passing the vertex buffer obtained from VertexConsumerProvider::getBuffer" style="whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="105" y="560" width="270" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="-gMOZmjQeYBe39kgHxyp-14" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="-gMOZmjQeYBe39kgHxyp-11" target="-gMOZmjQeYBe39kgHxyp-13">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="-gMOZmjQeYBe39kgHxyp-11" value="Animals use AnimalModel. AnimalModel::render loops through each headPart and bodyPart, calling ModelPart::render on each one, passing the VertexConsumer instance. There can be multiple headParts because of the existence of the wither" style="whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="100" y="700" width="280" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="-gMOZmjQeYBe39kgHxyp-16" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="-gMOZmjQeYBe39kgHxyp-13" target="-gMOZmjQeYBe39kgHxyp-15">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="-gMOZmjQeYBe39kgHxyp-13" value="ModelPart::render calls ModelPart::renderCuboids, passing the VertexConsumer instance" style="whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="140" y="820" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="-gMOZmjQeYBe39kgHxyp-18" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="-gMOZmjQeYBe39kgHxyp-15" target="-gMOZmjQeYBe39kgHxyp-17">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="-gMOZmjQeYBe39kgHxyp-15" value="ModelPart::renderCuboids calls Cuboid::renderCuboid on each of the cuboids in the model part, passing the VertexConsumer instance" style="whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="132.5" y="920" width="215" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="-gMOZmjQeYBe39kgHxyp-17" value="Cuboid::renderCuboid loops through all vertices of all the quads in the cuboid, adding each vertex to the VertexConsumer" style="whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="140" y="1020" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="-gMOZmjQeYBe39kgHxyp-25" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="-gMOZmjQeYBe39kgHxyp-20" target="-gMOZmjQeYBe39kgHxyp-21">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="-gMOZmjQeYBe39kgHxyp-20" value="game calls WorldRenderer::render" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="560" y="120" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="-gMOZmjQeYBe39kgHxyp-26" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="-gMOZmjQeYBe39kgHxyp-21" target="-gMOZmjQeYBe39kgHxyp-22">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="-gMOZmjQeYBe39kgHxyp-21" value="in WorldRenderer::render, there is a for loop that loops over every entity and calls WorldRenderer::renderEntity, passing the entity and the VertexConsumerProvider instance" style="whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="485" y="220" width="290" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="-gMOZmjQeYBe39kgHxyp-27" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="-gMOZmjQeYBe39kgHxyp-22" target="-gMOZmjQeYBe39kgHxyp-23">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="-gMOZmjQeYBe39kgHxyp-22" value="WorldRenderer::renderEntity calls EntityRenderDispatcher::render on the entityRenderDispatcher instance, passing the entity and VertexConsumerProvider instance" style="whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="505" y="320" width="250" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="-gMOZmjQeYBe39kgHxyp-28" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="-gMOZmjQeYBe39kgHxyp-23" target="-gMOZmjQeYBe39kgHxyp-24">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="-gMOZmjQeYBe39kgHxyp-23" value="EntityRenderDispatcher::render gets the entity renderer for the provided entity and calls EntityRenderer::render on the renderer, passing the entity and the VertexConsumerProvider instance. Since there are multiple types of entities in Minecraft, each needs their own way of rendering, so each type gets its own EntityRenderer" style="whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="470" y="420" width="320" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="-gMOZmjQeYBe39kgHxyp-30" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="-gMOZmjQeYBe39kgHxyp-24" target="-gMOZmjQeYBe39kgHxyp-29">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="-gMOZmjQeYBe39kgHxyp-24" value="Animals use LivingEntityRenderer which inherits EntityRenderer. LivingEntityRenderer::render checks for the existance of instances of each ModelPart on the GPU. If these instances don&#39;t exist, new instances are created. Then Model::render is called on the entity renderer&#39;s model instance, passing the vertex buffer obtained from VertexConsumerProvider::getBuffer" style="whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="480" y="560" width="300" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="-gMOZmjQeYBe39kgHxyp-29" value="Animals use AnimalModel. AnimalModel::render populates the VAO with instance positions and transformations for the model." style="whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="530" y="720" width="200" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="-gMOZmjQeYBe39kgHxyp-31" value="&lt;font style=&quot;font-size: 24px;&quot;&gt;How entities in Minecraft are currently rendered&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="105" y="20" width="270" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="-gMOZmjQeYBe39kgHxyp-32" value="&lt;font style=&quot;font-size: 24px;&quot;&gt;How entities in Minecraft should ACTUALLY be rendered&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="461.25" y="20" width="337.5" height="70" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

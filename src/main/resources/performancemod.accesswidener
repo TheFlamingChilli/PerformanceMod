@@ -1,0 +1,7 @@
+accessWidener v2 named
+
+accessible method net/minecraft/client/render/entity/model/AnimalModel getHeadParts ()Ljava/lang/Iterable;
+accessible method net/minecraft/client/render/entity/model/AnimalModel getBodyParts ()Ljava/lang/Iterable;
+accessible field net/minecraft/client/model/ModelPart cuboids Ljava/util/List;
+accessible field net/minecraft/client/model/TexturedModelData data Lnet/minecraft/client/model/ModelData;
+accessible field net/minecraft/client/model/ModelPart$Cuboid sides [Lnet/minecraft/client/model/ModelPart$Quad;

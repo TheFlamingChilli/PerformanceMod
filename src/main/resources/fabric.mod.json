@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "performancemod",
+  "version": "${version}",
+  "name": "PerformanceMod",
+  "description": "Replaces entity rendering with instanced entity rendering. Very good for fps",
+  "authors": ["TheFlamingChilli"],
+  "contact": {},
+  "license": "MIT",
+  "icon": "icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "com.theflamingchilli.performancemod.client.PerformanceModClient"
+    ],
+    "main": [
+      "com.theflamingchilli.performancemod.PerformanceMod"
+    ]
+  },
+  "mixins": [
+    "PerformanceMod.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.15.11",
+    "fabric": "*",
+    "minecraft": "1.20.1"
+  },
+  "accessWidener": "performancemod.accesswidener"
+}

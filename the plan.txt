@@ -1,0 +1,6 @@
+entity rendering uses immediate mode, where all the vertices for all the quads for all the entities
+are loaded into a vertex consumer, and then drawn
+
+instead, have one instanced draw call for every body part of an entity. so one call for the body, one for the head
+etc etc. if there is only 1 entity, use immediate mode instead. if there is more than 1, use instanced drawing
+to instance the body parts.

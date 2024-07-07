@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.theflamingchilli.performancemod.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "WindowMixin",
+    "WorldRendererMixin"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
