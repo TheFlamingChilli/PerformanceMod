@@ -2,7 +2,6 @@ package com.theflamingchilli.performancemod.mixin;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.theflamingchilli.performancemod.client.PerformanceModClient;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;

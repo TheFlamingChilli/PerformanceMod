@@ -171,6 +171,7 @@ public class PerformanceModClient implements ClientModInitializer {
                             .setTexture(entity)
                             .createUVCoords()
                             .createInstanceTransformBuffer()
+                            .createBooleansBuffer()
                             .build();
                     vaos.put(entityName, vao);
                 }
@@ -195,7 +196,10 @@ public class PerformanceModClient implements ClientModInitializer {
 
     public static void updateInstances(float tickDelta) {
         if (!readyToRender) return;
-        for (VAO vao : vaos.values()) vao.instanceTransforms.clear();
+        for (VAO vao : vaos.values()) {
+            vao.instancePositions.clear();
+            vao.instanceRotations.clear();
+        }
         for (Entity entity : client.world.getEntities()) {
             String entityName = entity.getName().getString();
             if (namesOfEntitiesToInstance.contains(entityName)) {
@@ -204,7 +208,14 @@ public class PerformanceModClient implements ClientModInitializer {
                 double f = MathHelper.lerp(tickDelta, entity.lastRenderZ, entity.getZ());
                 VAO vao = vaos.get(entityName);
                 if (vao == null) continue;
-                vao.addInstanceTransform((float) d, (float) e, (float) f, (float) Math.toRadians(entity.getBodyYaw() + 180));
+                vao.addInstanceTransform(
+                        (float) d,
+                        (float) e,
+                        (float) f,
+                        (float) Math.toRadians(entity.getBodyYaw() + 180),
+                        (float) Math.toRadians(entity.getPitch()),
+                        (float) Math.toRadians(entity.getHeadYaw() - entity.getBodyYaw())
+                );
             }
         }
     }
@@ -222,6 +233,8 @@ public class PerformanceModClient implements ClientModInitializer {
         setShaderUniforms(viewMatrix, projectionMatrix, 0);
 
         for (VAO vao : vaos.values()) {
+            int textureSamplerLocation = glGetUniformLocation(shaderProgram, "headOffset");
+            glUniform3f(textureSamplerLocation, vao.headOffset.x, vao.headOffset.y, vao.headOffset.z);
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, vao.texture.getGlId());
             vao.updateInstanceTransforms();

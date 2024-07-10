@@ -8,6 +8,8 @@
     "WorldRendererMixin"
   ],
   "client": [
+    "EntityRenderDispatcherMixin",
+    "LivingEntityRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

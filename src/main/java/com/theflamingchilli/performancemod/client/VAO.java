@@ -37,12 +37,15 @@ public class VAO {
     public int ID;
     public int vertexBufferID;
     public int indexBufferID;
-    public int instanceTransformBufferID;
+    public int instancePositionBufferID;
+    public int instanceRotationBufferID;
     public int uvCoordsID;
-    public List<Float> instanceTransforms = new ArrayList<>();
+    public int booleansBufferID;
+    public List<Float> instancePositions = new ArrayList<>();
+    public List<Float> instanceRotations = new ArrayList<>();
     public AbstractTexture texture;
-    private int texWidth;
-    private int texHeight;
+    public Vector3f headOffset;
+    public int totalBytes;
 
     private static int[] indices = {
             2, 3, 7, 7, 6, 2, // bottom
@@ -57,6 +60,7 @@ public class VAO {
         this.ID = glGenVertexArrays();
         glBindVertexArray(this.ID);
         this.modelParts = modelParts;
+        totalBytes = 0;
         LOGGER.info("Created new VAO for entity: " + entityName);
     }
 
@@ -66,28 +70,6 @@ public class VAO {
             Matrix4f rotationMatrix = new Matrix4f().rotationXYZ(part.pitch, part.yaw, part.roll);
             this.numCuboids += part.cuboids.size();
             for (ModelPart.Cuboid cuboid : part.cuboids) {
-//                Vector3f min = new Vector3f(cuboid.minX, cuboid.minY, cuboid.minZ);
-//                Vector3f max = new Vector3f(cuboid.maxX, cuboid.maxY, cuboid.maxZ);
-//                Matrix4f rotationMatrix = new Matrix4f().rotationXYZ(part.pitch, part.yaw, part.roll);
-//                min = rotationMatrix.transformPosition(min);
-//                max = rotationMatrix.transformPosition(max);
-//                min.add(part.pivotX, part.pivotY, part.pivotZ);
-//                max.add(part.pivotX, part.pivotY, part.pivotZ);
-//                float minx = Math.min(min.x, max.x) / 16.0f;
-//                float maxx = Math.max(min.x, max.x) / 16.0f;
-//                float miny = Math.min(min.y, max.y) / 16.0f;
-//                float maxy = Math.max(min.y, max.y) / 16.0f;
-//                float minz = Math.min(min.z, max.z) / 16.0f;
-//                float maxz = Math.max(min.z, max.z) / 16.0f;
-//                float[] temp = {
-//                        minx, miny, minz, maxx, miny, minz,
-//                        maxx, maxy, minz, minx, maxy, minz,
-//                        minx, miny, maxz, maxx, miny, maxz,
-//                        maxx, maxy, maxz, minx, maxy, maxz,
-//                };
-//                for (float v : temp) {
-//                    vertices.add(v);
-//                }
                 for (int i = 0; i < cuboid.sides.length; i++) {
                     ModelPart.Quad side = cuboid.sides[i];
                     List<Vector3f> rotatedVertices = new ArrayList<>();
@@ -100,11 +82,6 @@ public class VAO {
                         scaled = rotationMatrix.transformPosition(scaled);
                         rotatedVertices.add(scaled);
                     }
-//                    List<String> verts = new ArrayList<>();
-//                    for (Vector3f v : rotatedVertices) {
-//                        verts.add("(" + v.x + " " + v.y + " " + v.z + ")");
-//                    }
-//                    LOGGER.info(String.join(", ", verts));
                     int[] vertexOrder = new int[] {0, 1, 2, 2, 3, 0};
                     for (int i1 : vertexOrder) {
                         Vector3f v = rotatedVertices.get(i1);
@@ -128,6 +105,7 @@ public class VAO {
         glVertexAttribPointer(0, 3, GL_FLOAT, false, 3 * Float.BYTES, 0);
         glEnableVertexAttribArray(0);
         int numBytes = verticesArray.length * Float.BYTES;
+        totalBytes += numBytes;
         LOGGER.info("Uploaded vertices to VAO (ID:" + ID + ", " + numBytes + " bytes)");
         return this;
     }
@@ -155,6 +133,7 @@ public class VAO {
         buffer.flip();
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
         int numBytes = indices.length * Byte.BYTES;
+        totalBytes += numBytes;
         LOGGER.info("Uploaded indices to VAO (ID:" + ID + ", " + numBytes + " bytes)");
         return this;
     }
@@ -193,28 +172,77 @@ public class VAO {
         glVertexAttribPointer(1, 2, GL_FLOAT, false, 2 * Float.BYTES, 0);
         glEnableVertexAttribArray(1);
         int numBytes = uvCoordsArray.length * Float.BYTES;
+        totalBytes += numBytes;
         LOGGER.info("Uploaded uvs to VAO (ID:" + ID + ", " + numBytes + " bytes)");
         return this;
     }
 
     public VAO createInstanceTransformBuffer() {
-        instanceTransformBufferID = glGenBuffers();
-        glBindBuffer(GL_ARRAY_BUFFER, instanceTransformBufferID);
-        glVertexAttribPointer(2, 4, GL_FLOAT, false, 4 * Float.BYTES, 0);
+        instancePositionBufferID = glGenBuffers();
+        glBindBuffer(GL_ARRAY_BUFFER, instancePositionBufferID);
+        glVertexAttribPointer(2, 3, GL_FLOAT, false, 3 * Float.BYTES, 0);
         glEnableVertexAttribArray(2);
         glVertexAttribDivisor(2, 1);
+        instanceRotationBufferID = glGenBuffers();
+        glBindBuffer(GL_ARRAY_BUFFER, instanceRotationBufferID);
+        glVertexAttribPointer(3, 3, GL_FLOAT, false, 3 * Float.BYTES, 0);
+        glEnableVertexAttribArray(3);
+        glVertexAttribDivisor(3, 1);
         LOGGER.info("Prepared instance transforms for VAO (ID:" + ID + ")");
         return this;
     }
 
     public VAO updateInstanceTransforms() {
-        float[] instanceTransformsArray =  new float[instanceTransforms.size()];
-        for (int i = 0; i < instanceTransforms.size(); i++) instanceTransformsArray[i] = instanceTransforms.get(i);
-
-        glBindBuffer(GL_ARRAY_BUFFER, instanceTransformBufferID);
-        glBufferData(GL_ARRAY_BUFFER, instanceTransformsArray, GL_DYNAMIC_DRAW);
+        float[] instancePositionsArray =  new float[instancePositions.size()];
+        for (int i = 0; i < instancePositions.size(); i++) instancePositionsArray[i] = instancePositions.get(i);
+        glBindBuffer(GL_ARRAY_BUFFER, instancePositionBufferID);
+        glBufferData(GL_ARRAY_BUFFER, instancePositionsArray, GL_DYNAMIC_DRAW);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
+        float[] instanceRotationsArray =  new float[instanceRotations.size()];
+        for (int i = 0; i < instanceRotations.size(); i++) instanceRotationsArray[i] = instanceRotations.get(i);
+        glBindBuffer(GL_ARRAY_BUFFER, instanceRotationBufferID);
+        glBufferData(GL_ARRAY_BUFFER, instanceRotationsArray, GL_DYNAMIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+        return this;
+    }
+
+    private List<Byte> getBooleans() {
+        List<Byte> booleans = new ArrayList<>();
+        ModelPart headpart = modelParts.get(0);
+        headOffset = new Vector3f(headpart.pivotX / 16.0f, headpart.pivotY / 16.0f, headpart.pivotZ / 16.0f);
+        for (int i = 0; i < headpart.cuboids.size(); i++) {
+            for (int j = 0; j < 36; j++) {
+                booleans.add((byte) 1);
+            }
+        }
+        for (int i = 1; i < modelParts.size(); i++) {
+            ModelPart part = modelParts.get(i);
+            for (int j = 0; j < part.cuboids.size(); j++) {
+                for (int k = 0; k < 36; k++) {
+                    booleans.add((byte) 0);
+                }
+            }
+        }
+        return booleans;
+    }
+
+    public VAO createBooleansBuffer() {
+        booleansBufferID = glGenBuffers();
+        glBindBuffer(GL_ARRAY_BUFFER, booleansBufferID);
+        List<Byte> booleans = getBooleans();
+        byte[] booleansArray = new byte[booleans.size()];
+        for (int i = 0; i < booleans.size(); i++) booleansArray[i] = booleans.get(i);
+        ByteBuffer buffer = BufferUtils.createByteBuffer(booleans.size());
+        buffer.put(booleansArray);
+        buffer.flip();
+        glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
+        glVertexAttribPointer(4, 1, GL_UNSIGNED_BYTE, false, Byte.BYTES, 0);
+        glEnableVertexAttribArray(4);
+        int numBytes = booleansArray.length * Byte.BYTES;
+        totalBytes += numBytes;
+        LOGGER.info("Uploaded booleans to VAO (ID:" + ID + ", " + numBytes + " bytes)");
         return this;
     }
 
@@ -250,22 +278,22 @@ public class VAO {
         );
         String name = entity.getName().getString();
         texture = get(new Identifier("textures/entity/" + texturePaths.get(name)));
-        int[] textureDimensions = getTextureDimensions();
-        texWidth = textureDimensions[0];
-        texHeight = textureDimensions[1];
         return this;
     }
 
     public VAO build() {
         glBindVertexArray(0);
-        LOGGER.info("Built VAO (ID:" + ID + ")");
+        LOGGER.info("Built VAO (ID:" + ID + "), Total bytes sent to GPU: " + totalBytes + " bytes");
         return this;
     }
 
     public void cleanup() {
         glDeleteBuffers(vertexBufferID);
         glDeleteBuffers(indexBufferID);
-        glDeleteBuffers(instanceTransformBufferID);
+        glDeleteBuffers(instancePositionBufferID);
+        glDeleteBuffers(instanceRotationBufferID);
+        glDeleteBuffers(uvCoordsID);
+        glDeleteBuffers(booleansBufferID);
         glDeleteVertexArrays(ID);
     }
 
@@ -274,13 +302,15 @@ public class VAO {
     }
 
     public int numInstances() {
-        return instanceTransforms.size();
+        return instancePositions.size() / 3;
     }
 
-    public void addInstanceTransform(float x, float y, float z, float yaw) {
-        instanceTransforms.add(x);
-        instanceTransforms.add(y);
-        instanceTransforms.add(z);
-        instanceTransforms.add(yaw);
+    public void addInstanceTransform(float x, float y, float z, float entityYaw, float headPitch, float headYaw) {
+        instancePositions.add(x);
+        instancePositions.add(y);
+        instancePositions.add(z);
+        instanceRotations.add(entityYaw);
+        instanceRotations.add(headPitch);
+        instanceRotations.add(headYaw);
     }
 }
