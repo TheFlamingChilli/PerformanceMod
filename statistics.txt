@@ -1,0 +1,11 @@
+without original code
+baseline: 215 fps
+without shadows: 580 fps
+without entities: 705 fps
+without anything: 764 fps
+with instancing: 697 fps
+
+with original code except rendering
+baseline: 205 fps
+without shadows: 545 fps
+with instancing: 663 fps

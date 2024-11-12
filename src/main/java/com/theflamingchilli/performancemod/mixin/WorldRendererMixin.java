@@ -35,7 +35,7 @@ public abstract class WorldRendererMixin {
     private void renderEntity(Entity entity, double cameraX, double cameraY, double cameraZ, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, CallbackInfo ci) {
         if (PerformanceModClient.fastRenderingToggle) {
             if (PerformanceModClient.namesOfEntitiesToInstance.contains(entity.getName().getString())) {
-                ci.cancel();
+                //ci.cancel();
             }
         }
         /*

@@ -20,6 +20,10 @@ public class LivingEntityRendererMixin<T extends LivingEntity, M extends EntityM
             cancellable = true
     )
     private void render(T livingEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci) {
-        //ci.cancel();
+        if (PerformanceModClient.fastRenderingToggle) {
+            if (PerformanceModClient.namesOfEntitiesToInstance.contains(livingEntity.getName().getString())) {
+                ci.cancel();
+            }
+        }
     }
 }

@@ -30,6 +30,6 @@ public class WindowMixin {
 
     @Inject(method = "<init>", at = @At("TAIL"))
     private void createShaders(WindowEventHandler eventHandler, MonitorTracker monitorTracker, WindowSettings settings, String videoMode, String title, CallbackInfo ci) {
-        PerformanceModClient.createShaderProgram("vertex.vsh", "fragment.fsh");
+        PerformanceModClient.createShaders();
     }
 }

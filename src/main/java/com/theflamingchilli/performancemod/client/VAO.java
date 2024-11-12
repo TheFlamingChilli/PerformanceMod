@@ -17,15 +17,15 @@ import org.slf4j.LoggerFactory;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.opengl.GL31.GL_TEXTURE_BUFFER;
+import static org.lwjgl.opengl.GL31.glTexBuffer;
 import static org.lwjgl.opengl.GL33.glVertexAttribDivisor;
 
 public class VAO {
@@ -35,6 +35,7 @@ public class VAO {
     public List<ModelPart> modelParts;
     public int numCuboids;
     public int ID;
+    public int textureID;
     public int vertexBufferID;
     public int indexBufferID;
     public int instancePositionBufferID;
@@ -47,13 +48,13 @@ public class VAO {
     public Vector3f headOffset;
     public int totalBytes;
 
-    private static int[] indices = {
-            2, 3, 7, 7, 6, 2, // bottom
-            5, 4, 0, 0, 1, 5,  // top
-            1, 0, 3, 3, 2, 1, // front
-            0, 4, 7, 7, 3, 0, // left
-            4, 5, 6, 6, 7, 4, // back
-            5, 1, 2, 2, 6, 5 // right
+    private static int[] indices = new int[] {
+            0, 1, 2, 3, 0, 2, // top
+            4, 5, 6, 6, 7, 4,  // bottom
+            0, 7, 6, 6, 1, 0, // back
+            1, 6, 5, 5, 2, 1, // right
+            3, 2, 5, 5, 4, 3, // front
+            3, 4, 7, 7, 0, 3 // left
     };
 
     public VAO(List<ModelPart> modelParts, String entityName) {
@@ -61,7 +62,8 @@ public class VAO {
         glBindVertexArray(this.ID);
         this.modelParts = modelParts;
         totalBytes = 0;
-        LOGGER.info("Created new VAO for entity: " + entityName);
+        if (entityName != null)
+            LOGGER.info("Created new VAO for entity: " + entityName);
     }
 
     private List<Float> getVertices() {
@@ -70,8 +72,7 @@ public class VAO {
             Matrix4f rotationMatrix = new Matrix4f().rotationXYZ(part.pitch, part.yaw, part.roll);
             this.numCuboids += part.cuboids.size();
             for (ModelPart.Cuboid cuboid : part.cuboids) {
-                for (int i = 0; i < cuboid.sides.length; i++) {
-                    ModelPart.Quad side = cuboid.sides[i];
+                for (ModelPart.Quad side : cuboid.sides) {
                     List<Vector3f> rotatedVertices = new ArrayList<>();
                     for (ModelPart.Vertex vertex : side.vertices) {
                         Vector3f v = vertex.pos;
@@ -112,13 +113,21 @@ public class VAO {
 
     public VAO createIndicesBuffer() {
 //        indices = new int[] {
-//                1, 0, 3, 3, 2, 1, // front
-//                0, 4, 7, 7, 3, 0, // left
-//                4, 5, 6, 6, 7, 4, // back
-//                5, 1, 2, 2, 6, 5, // right
-//                2, 3, 7, 7, 6, 2, // bottom
-//                5, 4, 0, 0, 1, 5  // top
+//                0, 1, 2, 2, 3, 0, // top
+//                4, 5, 6, 6, 7, 4,  // bottom
+//                0, 7, 6, 6, 1, 0, // back
+//                1, 6, 5, 5, 2, 1, // right
+//                3, 2, 5, 5, 4, 3, // front
+//                3, 4, 7, 7, 0, 3 // left
 //        };
+        indices = new int[] {
+                0, 1, 2, 2, 3, 0, // top
+                4, 5, 6, 6, 7, 4,  // bottom
+                1, 6, 5, 5, 2, 1, // right
+                3, 2, 5, 5, 4, 3, // front
+                3, 4, 7, 7, 0, 3, // left
+                0, 7, 6, 6, 1, 0, // back
+        };
 
         indexBufferID = glGenBuffers();
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferID);
@@ -165,7 +174,7 @@ public class VAO {
         uvCoordsID = glGenBuffers();
         glBindBuffer(GL_ARRAY_BUFFER, uvCoordsID);
         List<Float> uvs = getUVs();
-        int numUVs = 36 * 2 * numCuboids; // 2 floats a uv, 8 vertices a cuboid, 16 uv floats a cuboid
+        int numUVs = uvs.size();
         float[] uvCoordsArray = new float[numUVs];
         for (int i = 0; i < numUVs; i++) uvCoordsArray[i] = uvs.get(i);
         glBufferData(GL_ARRAY_BUFFER, uvCoordsArray, GL_STATIC_DRAW);
@@ -278,6 +287,7 @@ public class VAO {
         );
         String name = entity.getName().getString();
         texture = get(new Identifier("textures/entity/" + texturePaths.get(name)));
+        textureID = texture.getGlId();
         return this;
     }
 

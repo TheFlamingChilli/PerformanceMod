@@ -1,10 +1,11 @@
-#version 330 core
+#version 460 core
 
 layout(location = 0) in vec3 vertexPosition;
 layout(location = 1) in vec2 uvCoord;
 layout(location = 2) in vec3 instancePosition;
 layout(location = 3) in vec3 instanceRotation;
 layout(location = 4) in float isHeadVertex;
+
 out vec2 texCoord;
 
 uniform mat4 viewMatrix;
@@ -41,9 +42,9 @@ void main() {
 
     vec3 rotatedPosition;
     if (isHeadVertex == 1.0) {
-        vec3 orginalVertexPosition = vertexPosition - headOffset;
-        rotatedPosition = (headYawMatrix * headPitchMatrix * orginalVertexPosition) + headOffset;
-        rotatedPosition = entityRollMatrix * entityYawMatrix * rotatedPosition;
+        vec3 headVertexOriginalPosition = vertexPosition - headOffset;
+        vec3 headVertexRotatedPosition = (headYawMatrix * headPitchMatrix * headVertexOriginalPosition) + headOffset;
+        rotatedPosition = entityRollMatrix * entityYawMatrix * headVertexRotatedPosition;
     } else {
         rotatedPosition = entityRollMatrix * entityYawMatrix * vertexPosition;
     }
